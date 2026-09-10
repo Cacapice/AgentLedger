@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agent Ledger — Verifiable agent accountability</title>
+<meta name="description" content="Tamper-evident audit infrastructure for autonomous AI agents.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header><a class="brand" href="#">Agent Ledger</a><nav><a href="app.html">Console</a><a href="#quickstart">Quickstart</a><a href="#architecture">Architecture</a><a href="#pricing">Pricing</a><a href="#checkout">Venmo checkout</a><a href="../openapi.yaml">API</a></nav></header>
+<main>
+<section class="hero"><p class="eyebrow">SYSTEM OF RECORD FOR AUTONOMOUS ACTIONS</p><h1>Every consequential agent action.<br>Attributable. Verifiable.</h1><p class="lede">Open SDKs instrument agent tools. A tenant-scoped ledger creates independent, tamper-evident receipts. MCP makes accountability callable by agents themselves.</p><div class="actions"><a class="primary" href="#quickstart">Start with the SDK</a><a href="#architecture">See how it works</a></div></section>
+<section class="grid"><article><span>01</span><h2>Instrument</h2><p>Python and TypeScript SDKs capture tool, actor, model, policy and execution context with default redaction.</p></article><article><span>02</span><h2>Record</h2><p>The hosted API authenticates each tenant, assigns server receipts, extends the tenant chain and meters usage.</p></article><article><span>03</span><h2>Verify</h2><p>CLI and MCP verification expose broken sequences, altered events and chain-head integrity without a dashboard dependency.</p></article></section>
+<section id="quickstart" class="panel"><div><p class="eyebrow">PYTHON</p><h2>One decorator.</h2><p>Local JSONL works without the hosted service. Add two environment variables when you want hosted receipts.</p></div><pre><code>pip install agent-ledger
+
+@audit_tool(agent_id="finance-agent")
+def execute_transfer(...):
+    ...
+
+$ agent-ledger verify audit_events.jsonl
+✓ Hash chain intact</code></pre></section>
+<section id="architecture" class="panel reverse"><pre><code>Agent / App
+     │
+ SDK │ MCP
+     ▼
+Ingestion API ── tenant auth
+     │
+     ├── audit_events
+     ├── chain_heads
+     └── usage_hourly</code></pre><div><p class="eyebrow">INDEPENDENT RECEIPTS</p><h2>Don't trust the client chain blindly.</h2><p>Agent Ledger preserves source provenance while creating a separate server-controlled tenant chain. The service becomes an independent accountability boundary.</p></div></section>
+<section id="pricing"><p class="eyebrow">EARLY-ADOPTION PRICING</p><h2>Start small. Upgrade when governance matters.</h2><div class="pricing pricing-five"><article><h3>Developer</h3><strong>Free</strong><p>25K events · 30-day retention.</p></article><article><h3>Starter</h3><strong>$20/mo</strong><p>50K events · 30-day retention.</p></article><article><h3>Pro</h3><strong>$49/mo</strong><p>250K events · 30-day retention.</p></article><article><h3>Governance</h3><strong>$99/mo</strong><p>1M events · 30-day retention.</p></article><article><h3>Scale</h3><strong>$249/mo</strong><p>5M events · 30-day retention.</p></article></div></section>
+<section id="checkout" class="checkout"><div><p class="eyebrow">VENMO BUSINESS CHECKOUT</p><h2>Monthly Venmo billing</h2><p class="muted">Automatic monthly renewal is the default. Where a recurring Venmo-capable provider is configured, you will authorize monthly billing once. Otherwise Agent Ledger falls back to Venmo_Business_QR for each renewal; QR scans alone never authorize recurring debits.</p><div class="checkout-grid"><label>API base URL<input id="apiBase" placeholder="https://ledger.example.workers.dev"></label><label>Tenant API key<input id="apiKey" type="password" placeholder="al_..."></label><label>Plan<select id="plan"><option value="starter">Starter — $20</option><option value="pro">Pro — $49</option><option value="governance">Governance — $99</option><option value="scale">Scale — $249</option></select></label></div><label class="renewal-option"><input id="autoRenew" type="checkbox" checked> Automatic monthly renewal (preferred)</label><button id="createOrder" class="primary-btn">Start monthly Venmo billing</button><p id="checkoutStatus" class="muted"></p></div><div id="venmoPanel" class="venmo-panel" hidden><p class="eyebrow">PAYMENT ORDER</p><h3 id="venmoAmount"></h3><img id="venmoQr" alt="Venmo business QR" hidden><p>Venmo: <strong id="venmoHandle">Venmo_Business_QR</strong></p><p>Payment note: <code id="paymentNote"></code></p><label>Venmo transaction reference<input id="transactionReference" placeholder="Enter after payment"></label><button id="submitPayment" class="primary-btn">I paid — submit for verification</button><p id="paymentStatus" class="muted"></p></div></section>
+<script src="checkout.js" defer></script>
+<p><a href="demo.html">Scuderia live proof demo</a></p></main>
+<footer><span>Agent Ledger v0.1</span><span>Audit evidence infrastructure — not a certification.</span></footer>
+</body></html>

@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://scuderialifestyle.org/schemas/agent-audit-event-v1.json",
+  "title": "AgentAuditEvent",
+  "description": "Tamper-evident, privacy-aware audit event for agent and administrative actions. This is a control/evidence schema, not a certification of regulatory compliance.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "event_id", "chain_id", "sequence_number", "timestamp",
+    "agent_id", "actor", "action_type", "tool_name", "execution_status",
+    "input_parameters", "output_summary", "payload_hash", "prev_event_hash", "event_hash"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "event_id": {"type": "string", "format": "uuid"},
+    "chain_id": {"type": "string", "minLength": 1, "maxLength": 200},
+    "sequence_number": {"type": "integer", "minimum": 1},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "agent_id": {"type": "string", "minLength": 1, "maxLength": 200},
+    "agent_version": {"type": ["string", "null"], "maxLength": 100},
+    "actor": {
+      "type": "object", "additionalProperties": false,
+      "required": ["principal_id", "principal_type"],
+      "properties": {
+        "principal_id": {"type": "string", "minLength": 1, "maxLength": 300},
+        "principal_type": {"enum": ["HUMAN", "SERVICE", "AGENT", "SYSTEM"]},
+        "auth_context_hash": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"}
+      }
+    },
+    "session_id": {"type": ["string", "null"], "maxLength": 300},
+    "trace_id": {"type": ["string", "null"], "maxLength": 300},
+    "action_type": {
+      "enum": ["TOOL_CALL", "API_REQUEST", "DATABASE_READ", "DATABASE_WRITE", "HUMAN_IN_THE_LOOP_APPROVAL", "DELEGATED_ACTION", "POLICY_DECISION", "AUTHENTICATION", "DATA_EXPORT"]
+    },
+    "tool_name": {"type": "string", "minLength": 1, "maxLength": 300},
+    "resource": {
+      "type": ["object", "null"], "additionalProperties": false,
+      "properties": {
+        "type": {"type": ["string", "null"], "maxLength": 100},
+        "id": {"type": ["string", "null"], "maxLength": 500},
+        "classification": {"enum": ["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED", null]}
+      }
+    },
+    "model_context": {
+      "type": ["object", "null"], "additionalProperties": false,
+      "properties": {
+        "provider": {"type": ["string", "null"], "maxLength": 100},
+        "model": {"type": ["string", "null"], "maxLength": 200},
+        "model_version": {"type": ["string", "null"], "maxLength": 200},
+        "prompt_snapshot_hash": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"}
+      }
+    },
+    "policy_context": {
+      "type": ["object", "null"], "additionalProperties": false,
+      "properties": {
+        "policy_id": {"type": ["string", "null"], "maxLength": 200},
+        "policy_version": {"type": ["string", "null"], "maxLength": 100},
+        "decision": {"enum": ["ALLOW", "DENY", "REQUIRE_APPROVAL", null]},
+        "reason_code": {"type": ["string", "null"], "maxLength": 200}
+      }
+    },
+    "input_parameters": {"type": "object", "description": "Redacted/minimized execution parameters; secrets and regulated data should not be logged by default."},
+    "output_summary": {"type": "object", "description": "Bounded, redacted summary rather than an unrestricted raw output."},
+    "redaction": {
+      "type": "object", "additionalProperties": false,
+      "required": ["applied"],
+      "properties": {
+        "applied": {"type": "boolean"},
+        "fields": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      }
+    },
+    "execution_duration_ms": {"type": "number", "minimum": 0},
+    "execution_status": {"enum": ["SUCCESS", "FAILED", "BLOCKED_BY_POLICY", "CANCELLED", "PARTIAL"]},
+    "error": {
+      "type": ["object", "null"], "additionalProperties": false,
+      "properties": {
+        "type": {"type": ["string", "null"], "maxLength": 200},
+        "code": {"type": ["string", "null"], "maxLength": 200},
+        "message": {"type": ["string", "null"], "maxLength": 2000}
+      }
+    },
+    "payload_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$", "description": "SHA-256 over canonicalized privacy-filtered payload fields."},
+    "prev_event_hash": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$", "description": "Previous event_hash; null only for the first event in a chain."},
+    "event_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$", "description": "SHA-256 over the canonical event excluding event_hash itself."},
+    "integrity": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "algorithm": {"const": "SHA-256"},
+        "canonicalization": {"const": "JCS-compatible-sorted-json-v1"}
+      }
+    }
+  }
+}

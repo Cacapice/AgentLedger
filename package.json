@@ -1,0 +1,15 @@
+{
+  "name": "agent-ledger-monorepo",
+  "private": true,
+  "version": "0.4.1",
+  "workspaces": [
+    "packages/typescript",
+    "apps/mcp",
+    "services/ingestion"
+  ],
+  "scripts": {
+    "test": "npm run test -w @agent-ledger/sdk && npm run test -w @agent-ledger/ingestion",
+    "build": "npm run build -w @agent-ledger/sdk && npm run build -w @agent-ledger/mcp",
+    "check": "npm run build && npm test"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "@agent-ledger/mcp",
+  "version": "0.4.1",
+  "description": "MCP server for Agent Ledger audit recording, verification, and usage",
+  "type": "module",
+  "license": "Apache-2.0",
+  "bin": {
+    "agent-ledger-mcp": "dist/server.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.18.0",
+    "@agent-ledger/sdk": "file:../../packages/typescript",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "@types/node": "^22.10.0"
+  }
+}
