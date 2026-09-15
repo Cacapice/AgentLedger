@@ -2,7 +2,35 @@
 
 **A tamper-evident accountability layer for autonomous AI agents.**
 
+[![Python tests](https://github.com/Cacapice/AgentLedger/actions/workflows/python-tests.yml/badge.svg)](https://github.com/Cacapice/AgentLedger/actions/workflows/python-tests.yml)
+
 Agent Ledger records consequential agent actions with attribution, authority, policy context, results, and verifiable audit evidence. It is designed to support operational governance and audit evidence without replacing the developer's existing agent framework or observability stack.
+
+## Agent Safety & Python Developer Experience
+
+The Python SDK now includes validated Pydantic transaction records and agent-specific financial guardrails:
+
+```python
+from agent_ledger import Ledger
+
+ledger = Ledger(balances={"agent_a": 100, "agent_b": 0}, strict=True)
+
+with ledger.transaction():
+    ledger.debit("agent_a", 50, idempotency_key="purchase_123")
+    ledger.credit("agent_b", 50)
+
+ledger.transfer("agent_a", "agent_b", 10, allow_negative=False)
+df = ledger.get_history()  # pip install 'agent-ledger[analytics]'
+```
+
+- **Atomic transactions:** context-manager rollback if a block fails.
+- **Strict mode:** overdraft protection by default.
+- **Idempotency keys:** safe retries without duplicate debits/transfers.
+- **Pydantic models:** validated, typed transaction records.
+- **Structured JSON logs:** transaction events are emitted through Python logging.
+- **Pandas/CSV export:** notebook-friendly transaction history.
+- **Budget decorator:** `@ledger.limit_spending(max_cost=5.00)` rolls back work that exceeds the configured cap.
+- **Scenario example:** `examples/agent_marketplace.py` demonstrates atomic agent-to-agent settlement.
 
 ## v4.4.1 — Self-Service Launch Control Plane
 
@@ -49,3 +77,7 @@ Deployment and publishing guidance is available in:
 - `docs/PUBLISHING.md`
 - `docs/API.md`
 
+
+## Testing standard
+
+CI runs the Python suite across Python 3.10–3.13 with coverage reporting on every push and pull request. The current repository-wide baseline is enforced in CI and should be ratcheted upward as legacy modules gain tests; the target for money-moving balance primitives is 100% behavioral coverage, including rollback, overdraft, retry/idempotency, transfer, analytics export, and spending-limit paths.
