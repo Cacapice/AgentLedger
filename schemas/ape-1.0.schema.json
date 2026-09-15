@@ -1,0 +1,119 @@
+{
+  "additionalProperties": false,
+  "description": "APE 1.0: canonical, versioned evidence record for an agent transition.",
+  "properties": {
+    "schema_version": {
+      "const": "ape/1.0",
+      "default": "ape/1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "event_id": {
+      "format": "uuid",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "timestamp": {
+      "format": "date-time",
+      "title": "Timestamp",
+      "type": "string"
+    },
+    "agent_id": {
+      "title": "Agent Id",
+      "type": "string"
+    },
+    "action": {
+      "title": "Action",
+      "type": "string"
+    },
+    "agent_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Agent Version"
+    },
+    "run_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Run Id"
+    },
+    "prior_state": {
+      "default": null,
+      "title": "Prior State"
+    },
+    "resulting_state": {
+      "default": null,
+      "title": "Resulting State"
+    },
+    "observation": {
+      "default": null,
+      "title": "Observation"
+    },
+    "outcome": {
+      "default": null,
+      "title": "Outcome"
+    },
+    "confidence": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Confidence"
+    },
+    "policy_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Policy Id"
+    },
+    "provenance": {
+      "additionalProperties": true,
+      "title": "Provenance",
+      "type": "object"
+    },
+    "idempotency_key": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Idempotency Key"
+    }
+  },
+  "required": [
+    "agent_id",
+    "action"
+  ],
+  "title": "AgentProvenanceEvent",
+  "type": "object"
+}
