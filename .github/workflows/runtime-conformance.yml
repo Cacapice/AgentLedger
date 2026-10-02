@@ -4,7 +4,7 @@ jobs:
   python:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
       - run: pip install -e 'packages/python[crypto]' pytest
@@ -12,7 +12,7 @@ jobs:
   typescript:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with: {node-version: '22'}
       - run: npm install
@@ -22,7 +22,7 @@ jobs:
   go:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
         with: {go-version: '1.22'}
       - run: go run ./cmd/agentledger-go conformance ../contracts/conformance/runtime_semantics.v1.json
@@ -30,7 +30,7 @@ jobs:
   rust:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
       - run: cargo test --quiet
         working-directory: rust
