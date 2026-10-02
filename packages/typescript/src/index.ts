@@ -136,10 +136,21 @@ export class EffectLedger {
 }
 function assertUnicode(s:string){for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);if(c>=0xd800&&c<=0xdbff){const n=s.charCodeAt(++i);if(!(n>=0xdc00&&n<=0xdfff))throw new Error("lone surrogate is not valid I-JSON")}else if(c>=0xdc00&&c<=0xdfff)throw new Error("lone surrogate is not valid I-JSON")}}
 export function canonicalizeJcs(v:unknown):string {if(v===null)return"null";if(typeof v==="string"){assertUnicode(v);return JSON.stringify(v)}if(typeof v==="number"){if(!Number.isFinite(v))throw new Error("NaN and Infinity are not valid I-JSON");return JSON.stringify(v)}if(typeof v==="boolean")return v?"true":"false";if(Array.isArray(v))return`[${v.map(canonicalizeJcs).join(",")}]`;if(typeof v==="object"){const o=v as Record<string,unknown>;const ks=Object.keys(o).sort();ks.forEach(assertUnicode);return`{${ks.map(k=>`${JSON.stringify(k)}:${canonicalizeJcs(o[k])}`).join(",")}}`}throw new Error(`unsupported JSON type: ${typeof v}`)}
-async function sha256Bytes(b:Uint8Array){return new Uint8Array(await crypto.subtle.digest("SHA-256",b))}function hex(b:Uint8Array){return [...b].map(x=>x.toString(16).padStart(2,"0")).join("")}function enc(s:string){return new TextEncoder().encode(s)}
+type Bytes = Uint8Array<ArrayBuffer>;
+function ownedBytes(input: Uint8Array): Bytes {
+  const out = new Uint8Array(input.byteLength);
+  out.set(input);
+  return out;
+}
+async function sha256Bytes(input: Uint8Array): Promise<Bytes> {
+  const digest = await crypto.subtle.digest("SHA-256", ownedBytes(input));
+  return new Uint8Array(digest);
+}
+function hex(b: Uint8Array){return [...b].map(x=>x.toString(16).padStart(2,"0")).join("")}
+function enc(s:string): Bytes {return ownedBytes(new TextEncoder().encode(s))}
 export async function sha256Jcs(v:unknown){return hex(await sha256Bytes(enc(canonicalizeJcs(v))))}
 async function tagged(tag:number,data:Uint8Array){const b=new Uint8Array(data.length+1);b[0]=tag;b.set(data,1);return sha256Bytes(b)}
-export async function merkleRoot(values:unknown[]){if(!values.length)return hex(await sha256Bytes(new Uint8Array()));let level=await Promise.all(values.map(v=>tagged(0,enc(canonicalizeJcs(v)))));while(level.length>1){if(level.length%2)level.push(level[level.length-1]);const next:Uint8Array[]=[];for(let i=0;i<level.length;i+=2){const b=new Uint8Array(1+level[i].length+level[i+1].length);b[0]=1;b.set(level[i],1);b.set(level[i+1],1+level[i].length);next.push(await sha256Bytes(b))}level=next}return hex(level[0])}
+export async function merkleRoot(values:unknown[]){if(!values.length)return hex(await sha256Bytes(new Uint8Array()));let level=await Promise.all(values.map(v=>tagged(0,enc(canonicalizeJcs(v)))));while(level.length>1){if(level.length%2)level.push(level[level.length-1]);const next:Bytes[]=[];for(let i=0;i<level.length;i+=2){const b=new Uint8Array(1+level[i].length+level[i+1].length);b[0]=1;b.set(level[i],1);b.set(level[i+1],1+level[i].length);next.push(await sha256Bytes(b))}level=next}return hex(level[0])}
 export async function buildRunManifest(run_id:string,events:unknown[],effects:unknown[],metadata:Record<string,unknown>={}){return {manifest_version:"agent-ledger-run-manifest/1",canonicalization:"RFC8785",hash:"SHA-256",run_id,event_count:events.length,event_root:await merkleRoot(events),effect_count:effects.length,effect_root:await merkleRoot(effects),metadata}}
 export async function compareReplay(expected:unknown[],actual:unknown[]){const divergences:any[]=[];let matched=0;for(let i=0;i<Math.max(expected.length,actual.length);i++){if(i>=expected.length)divergences.push({index:i,kind:"unexpected",expected:null,actual:actual[i]});else if(i>=actual.length)divergences.push({index:i,kind:"missing",expected:expected[i],actual:null});else if(await sha256Jcs(expected[i])!==await sha256Jcs(actual[i]))divergences.push({index:i,kind:"content",expected:expected[i],actual:actual[i]});else matched++}return{matched,equivalent:divergences.length===0,effects_executed:false,divergences}}
 
