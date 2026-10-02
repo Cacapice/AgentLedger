@@ -32,7 +32,6 @@ def observe_scuderia_indexability(
     logger = logger or AuditLogger.from_env()
     started = time.perf_counter()
     status = "SUCCESS"
-    error: BaseException | None = None
     result: dict[str, Any] = {}
     try:
         request = urllib.request.Request(

@@ -2,7 +2,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime, timezone, timedelta
-import secrets, time
+import secrets
 from typing import Any
 
 class LeaseBusy(RuntimeError): pass

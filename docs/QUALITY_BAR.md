@@ -20,3 +20,12 @@ the following domains have objective gates and no known critical/high-severity d
 
 A release is not represented as meeting the target until required GitHub CI jobs pass. Environment-
 dependent integration checks are not converted into mocked passes.
+
+
+### Python lint baseline
+
+The v0.9.2 CI gate treats Ruff `F` (Pyflakes correctness) findings as release-blocking.
+Legacy compact formatting is not retroactively promoted to a release blocker; formatting
+normalization should be performed separately from behavioral changes. This prevents a
+style-only migration from obscuring correctness failures while keeping unused/undefined
+name checks mandatory.

@@ -17,10 +17,11 @@ jobs:
         options: >-
           --health-cmd="mysqladmin ping -h localhost -proot" --health-interval=5s --health-timeout=5s --health-retries=30
       minio:
-        image: minio/minio:latest
+        image: quay.io/minio/minio:RELEASE.2025-09-06T17-38-46Z
         env: {MINIO_ROOT_USER: minioadmin, MINIO_ROOT_PASSWORD: minioadmin}
         ports: [9000:9000]
-        options: --health-cmd "curl -f http://localhost:9000/minio/health/live || exit 1" --health-interval 5s --health-timeout 3s --health-retries 20
+        options: >-
+          --health-cmd="mc ready local" --health-interval=5s --health-timeout=5s --health-retries=20
     env:
       AGENTLEDGER_POSTGRES_DSN: postgresql://agentledger:agentledger@localhost:5432/agentledger
       AGENTLEDGER_MYSQL_URL: mysql://agentledger:agentledger@localhost:3306/agentledger
