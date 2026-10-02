@@ -1,7 +1,6 @@
 """Versioned capability discovery and compatibility checks for long-lived AgentLedger evidence."""
 from __future__ import annotations
 from dataclasses import dataclass, asdict
-from typing import Iterable
 
 RUNTIME_CONTRACT = "agentledger.runtime.v1"
 EVIDENCE_BUNDLE_VERSION = "agentledger.evidence.bundle/1"

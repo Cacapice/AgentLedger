@@ -1,6 +1,5 @@
 from __future__ import annotations
 import base64, hashlib
-from dataclasses import dataclass, asdict
 from typing import Any
 from .jcs import canonicalize_bytes
 from .signing import key_fingerprint, _require, Ed25519PrivateKey, Ed25519PublicKey, serialization

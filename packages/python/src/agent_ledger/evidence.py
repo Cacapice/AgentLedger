@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
-from typing import Any, Callable, Iterable, Literal, Mapping, Optional
+from typing import Any, Callable, Iterable, Literal, Mapping
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, ConfigDict, Field

@@ -5,7 +5,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from agent_ledger.core import AuditLogger, IngestionClient, JsonlSink, verify_chain
+from agent_ledger.core import AuditLogger, JsonlSink, verify_chain
 from agent_ledger.scuderia import observe_scuderia_indexability
 
 

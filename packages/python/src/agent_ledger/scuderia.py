@@ -61,7 +61,6 @@ def observe_scuderia_indexability(
         }
     except BaseException as exc:
         status = "FAILED"
-        error = exc
         result = {"error_type": type(exc).__name__, "message": str(exc)[:500]}
     event = logger.log_event(
         agent_id="scuderia-indexability-agent",

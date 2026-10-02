@@ -1,6 +1,5 @@
 """Evidence-derived reliability/SLO scorecards."""
 from __future__ import annotations
-from dataclasses import dataclass,asdict
 from typing import Any
 
 def evidence_slo(*,effects,divergences=(),lease_events=()):

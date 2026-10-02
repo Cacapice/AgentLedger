@@ -2,7 +2,6 @@
 from __future__ import annotations
 from dataclasses import dataclass, asdict
 import hashlib, json, uuid
-from typing import Any
 
 class InjectedFailure(RuntimeError): pass
 class CorruptBlob(RuntimeError): pass

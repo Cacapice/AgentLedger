@@ -3,7 +3,6 @@ import pytest
 from agent_ledger.manifest import build_run_manifest, sign_manifest
 from agent_ledger.signing import generate_keypair
 from agent_ledger.disclosure import disclose, verify_disclosure
-from agent_ledger.reconcile import ReconcilerRegistry
 from agent_ledger.providers import StripeReconciler, GitHubReconciler, HTTPIdempotencyReconciler
 from agent_ledger.slo import scorecard, grouped_scorecards
 

@@ -1,4 +1,4 @@
-import math, pytest
+import pytest
 from agent_ledger import canonicalize_jcs, JCSError, generate_keypair, build_run_manifest, sign_manifest, verify_manifest, compare_replay
 
 def test_rfc8785_sample():

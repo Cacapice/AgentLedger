@@ -1,6 +1,6 @@
 """Distributed lease/heartbeat primitives backed by any revisioned StateStore."""
 from __future__ import annotations
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from datetime import datetime, timezone, timedelta
 import secrets, time
 from typing import Any
