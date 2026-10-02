@@ -16,7 +16,7 @@ def test_mysql_real():
  from agent_ledger.adapters import MySQLStateStore
  s=MySQLStateStore.from_url(url); s.initialize(); assert certify_state_store(lambda:s,'mysql').certified
 
-def test_minio_real():
+def test_s3_compatible_real():
  endpoint=os.getenv('AGENTLEDGER_S3_ENDPOINT')
  if not endpoint: pytest.skip('AGENTLEDGER_S3_ENDPOINT not set')
  boto3=pytest.importorskip('boto3'); bucket=os.getenv('AGENTLEDGER_S3_BUCKET','agentledger-test')
@@ -24,4 +24,4 @@ def test_minio_real():
  try:c.create_bucket(Bucket=bucket)
  except Exception:pass
  from agent_ledger.adapters import S3BlobStore
- assert certify_blob_store(lambda:S3BlobStore(c,bucket,prefix='ci/'),'minio').certified
+ assert certify_blob_store(lambda:S3BlobStore(c,bucket,prefix='ci/'),'s3-compatible').certified

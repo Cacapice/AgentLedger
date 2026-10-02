@@ -1,11 +1,8 @@
 from __future__ import annotations
 import base64, hashlib
-from typing import Any, TYPE_CHECKING
+from typing import Any
 from .jcs import canonicalize_bytes
 
-if TYPE_CHECKING:
-    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey as Ed25519PrivateKeyType
-    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey as Ed25519PublicKeyType
 
 try:
     from cryptography.hazmat.primitives import serialization

@@ -16,20 +16,33 @@ jobs:
         ports: [3306:3306]
         options: >-
           --health-cmd="mysqladmin ping -h localhost -proot" --health-interval=5s --health-timeout=5s --health-retries=30
-      minio:
-        image: quay.io/minio/aistor/minio:RELEASE.2026-09-19T17-05-25Z
-        env: {MINIO_ROOT_USER: minioadmin, MINIO_ROOT_PASSWORD: minioadmin}
-        ports: [9000:9000]
     env:
       AGENTLEDGER_POSTGRES_DSN: postgresql://agentledger:agentledger@localhost:5432/agentledger
       AGENTLEDGER_MYSQL_URL: mysql://agentledger:agentledger@localhost:3306/agentledger
-      AGENTLEDGER_S3_ENDPOINT: http://localhost:9000
+      AGENTLEDGER_S3_ENDPOINT: http://127.0.0.1:9000
       AGENTLEDGER_S3_BUCKET: agentledger-test
-      AWS_ACCESS_KEY_ID: minioadmin
-      AWS_SECRET_ACCESS_KEY: minioadmin
+      AWS_ACCESS_KEY_ID: agentledger
+      AWS_SECRET_ACCESS_KEY: agentledger
+      AWS_DEFAULT_REGION: us-east-1
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
-      - run: pip install -e 'packages/python[production,test]'
-      - run: pytest -q packages/python/tests/test_real_services.py
+      - name: Install integration dependencies
+        run: |
+          pip install -e 'packages/python[production,test]'
+          pip install 'moto[server]>=5,<6'
+      - name: Start S3-compatible test endpoint
+        run: |
+          moto_server -H 127.0.0.1 -p 9000 > /tmp/agentledger-moto.log 2>&1 &
+          echo $! > /tmp/agentledger-moto.pid
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:9000/ >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/agentledger-moto.log
+          exit 1
+      - name: Certify real adapters
+        run: pytest -q packages/python/tests/test_real_services.py

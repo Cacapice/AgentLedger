@@ -9,8 +9,7 @@ services:
     environment: {MYSQL_ROOT_PASSWORD: root, MYSQL_DATABASE: agentledger, MYSQL_USER: agentledger, MYSQL_PASSWORD: agentledger}
     ports: ["53306:3306"]
     healthcheck: {test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"], interval: 3s, timeout: 3s, retries: 40}
-  minio:
-    image: quay.io/minio/aistor/minio:RELEASE.2026-09-19T17-05-25Z
-    command: server /data --console-address :9001
-    environment: {MINIO_ROOT_USER: minioadmin, MINIO_ROOT_PASSWORD: minioadmin}
-    ports: ["59000:9000", "59001:9001"]
+  s3:
+    image: motoserver/moto:5.1.12
+    command: ["-H", "0.0.0.0", "-p", "9000"]
+    ports: ["59000:9000"]
