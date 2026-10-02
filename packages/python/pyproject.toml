@@ -9,12 +9,6 @@ description = "Tamper-evident audit SDK and verifier for autonomous agent action
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = ["pydantic>=2.7,<3"]
-
-[project.optional-dependencies]
-analytics = ["pandas>=2.0"]
-production = ["psycopg[binary]>=3.2", "PyMySQL>=1.1", "boto3>=1.35"]
-test = ["pytest>=8", "hypothesis>=6.112", "ruff>=0.6", "mypy>=1.11", "build>=1.2"]
-crypto = ["cryptography>=43"]
 license = {text = "Apache-2.0"}
 authors = [{name = "Agent Ledger contributors"}]
 keywords = ["ai", "agents", "audit", "governance", "provenance", "mcp"]
@@ -23,6 +17,12 @@ classifiers = [
   "License :: OSI Approved :: Apache Software License",
   "Operating System :: OS Independent"
 ]
+
+[project.optional-dependencies]
+analytics = ["pandas>=2.0"]
+production = ["psycopg[binary]>=3.2", "PyMySQL>=1.1", "boto3>=1.35"]
+test = ["pytest>=8", "hypothesis>=6.112", "ruff>=0.6", "mypy>=1.11", "build>=1.2"]
+crypto = ["cryptography>=43"]
 
 [project.scripts]
 agent-ledger = "agent_ledger.cli:main"
