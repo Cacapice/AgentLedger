@@ -18,7 +18,9 @@ class Ledger:
     def __init__(self, logger=None, agent="agent", version=None, balances: Mapping[str, Any] | None=None):
         self.logger=logger or AuditLogger.from_env(); self.agent=agent; self.version=version
         self._balances={str(k): Decimal(str(v)) for k,v in (balances or {}).items()}
-        self._history=[]; self._idempotency={}; self._lock=threading.RLock()
+        self._history: list[dict[str, Any]]=[]
+        self._idempotency: dict[str, tuple[str, Any]]={}
+        self._lock=threading.RLock()
 
     def balance(self, account): return self._balances.get(str(account), Decimal("0"))
 
