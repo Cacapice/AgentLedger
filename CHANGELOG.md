@@ -1,3 +1,11 @@
+## 0.6.0
+
+- RFC 8785 JCS canonicalization for signed evidence.
+- Signed SHA-256 Merkle run manifests.
+- TypeScript runtime/effect parity.
+- MCP run/effect/manifest/replay tools.
+- Non-effecting replay and divergence reports.
+
 ## 0.4.1 — 2026-09-10
 - Fixed deployment packaging so nested `npm install` does not query the public registry for unpublished `@agent-ledger/sdk`.
 - MCP now resolves the bundled TypeScript SDK through `file:../../packages/typescript`.
@@ -67,3 +75,11 @@ Added Python SDK/CLI, TypeScript SDK, MCP server, commercial hosted-ingestion Wo
 ## 0.2.0 — 2026-09-10
 
 Commercial SaaS control-plane foundation: tenant billing and entitlement periods, Venmo QR/manual reconciliation flow, admin verify/reject actions, checkout UI, and lower early-adoption thresholds. Current monthly pricing: Developer $0, Starter $20, Pro $49, Governance $99, Scale $249. Public Venmo billing alias: `Venmo_Business_QR`; exact QR image remains deployment-configurable via `VENMO_BUSINESS_QR_URL`.
+
+## 0.5.0
+- Restored transactional balance, spending-limit, and request-bound idempotency primitives expected by the safety test suite.
+- Added durable run/checkpoint storage with leases and fencing tokens for stale-worker rejection.
+- Added a persistent external-effect lifecycle with explicit `UNKNOWN` state and reconciliation semantics.
+- Added optional Ed25519 evidence signing and key fingerprints via the `crypto` extra.
+- Fixed Python src-layout pytest discovery and public npm workspace references.
+- Added runtime/effect tests and documentation.

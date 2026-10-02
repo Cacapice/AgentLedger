@@ -12,6 +12,7 @@ dependencies = ["pydantic>=2.7,<3"]
 
 [project.optional-dependencies]
 analytics = ["pandas>=2.0"]
+crypto = ["cryptography>=43"]
 license = {text = "Apache-2.0"}
 authors = [{name = "Agent Ledger contributors"}]
 keywords = ["ai", "agents", "audit", "governance", "provenance", "mcp"]
@@ -26,3 +27,6 @@ agent-ledger = "agent_ledger.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

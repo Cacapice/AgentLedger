@@ -132,6 +132,16 @@ The existing audit SDK records consequential actions with:
 
 The CLI verifier can independently check a local JSONL chain for sequence, linkage, and event-hash integrity.
 
+## v0.5 runtime guarantees
+
+The public SDK now includes two reliability primitives for consequential agents:
+
+- **Durable run state** with persisted checkpoints, revisions, leases, and fencing tokens to reject stale workers after recovery.
+- **External-effect ledger** with an explicit `UNKNOWN` state for ambiguous writes, plus request-bound idempotency keys and reconciliation to committed/failed outcomes.
+- **Optional Ed25519 evidence signing** (`agent-ledger[crypto]`) with key fingerprints, complementing the existing SHA-256 hash chain.
+
+See `docs/RUNTIME_AND_EFFECTS.md`. These mechanisms improve recoverability and provenance; they do not claim distributed exactly-once execution.
+
 ## Design principle
 
 Agent Ledger deliberately separates **observation** from **inference**.
@@ -177,3 +187,8 @@ Developer-facing SDKs, schemas, validation primitives, integrations, examples, a
 ## Scope
 
 Agent Ledger is evidence and validation infrastructure. It does **not** by itself prove that an agent is safe, compliant, correct, or statistically well-calibrated. Those conclusions depend on the operational boundary, evidence quality, sampling process, model assumptions, and validation procedure chosen by the developer.
+
+
+### Cryptographic run evidence (v0.6)
+
+RFC 8785 canonical evidence, Ed25519-signed Merkle run manifests, durable run/effect primitives, MCP lifecycle tools, and safe replay/divergence reporting are documented in `docs/CRYPTOGRAPHIC_RUN_EVIDENCE.md`.

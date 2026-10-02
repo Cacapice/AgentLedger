@@ -1,6 +1,6 @@
 {
   "name": "@agent-ledger/sdk",
-  "version": "0.4.1",
+  "version": "0.6.0",
   "description": "TypeScript SDK for tamper-evident agent audit events",
   "type": "module",
   "license": "Apache-2.0",

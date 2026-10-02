@@ -4,11 +4,13 @@ import { createHash } from "node:crypto";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { AuditClient } from "@agent-ledger/sdk";
+import { AuditClient, DurableRunStore, EffectLedger, buildRunManifest, compareReplay } from "@agent-ledger/sdk";
 
 const baseUrl = process.env.AGENT_LEDGER_URL;
 const apiKey = process.env.AGENT_LEDGER_API_KEY;
 const client = baseUrl && apiKey ? new AuditClient({baseUrl, apiKey}) : null;
+const runs = new DurableRunStore();
+const effects = new EffectLedger();
 
 function stable(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(stable).join(",")}]`;
@@ -59,5 +61,14 @@ server.tool("audit_usage","Read current tenant usage from Agent Ledger",{},async
   return {content:[{type:"text",text:JSON.stringify(await client.usage(),null,2)}]};
 });
 server.tool("audit_verify_file","Verify a local Agent Ledger JSONL hash chain",{path:z.string()},async({path})=>({content:[{type:"text",text:JSON.stringify(await verifyFile(path),null,2)}]}));
+
+
+server.tool("run_create","Create an explicitly identified agent run",{run_id:z.string().optional()},async({run_id})=>({content:[{type:"text",text:JSON.stringify(runs.create(run_id),null,2)}]}));
+server.tool("run_acquire","Acquire a run and receive a fencing token",{run_id:z.string(),owner:z.string()},async({run_id,owner})=>({content:[{type:"text",text:JSON.stringify(runs.acquire(run_id,owner),null,2)}]}));
+server.tool("run_checkpoint","Checkpoint a run; stale fencing tokens are rejected",{run_id:z.string(),lease_token:z.string(),step:z.string(),checkpoint:z.unknown(),status:z.enum(["RUNNING","WAITING"]).optional()},async a=>({content:[{type:"text",text:JSON.stringify(runs.checkpoint(a.run_id,a.lease_token,a.step,a.checkpoint,a.status??"RUNNING"),null,2)}]}));
+server.tool("effect_propose","Register an external effect without executing it",{run_id:z.string(),tool_name:z.string(),idempotency_key:z.string(),request:z.unknown(),metadata:z.record(z.unknown()).optional()},async a=>({content:[{type:"text",text:JSON.stringify(await effects.propose(a),null,2)}]}));
+server.tool("effect_transition","Advance an effect lifecycle. COMMITTED/FAILED after UNKNOWN is reconciliation, not re-execution.",{effect_id:z.string(),status:z.enum(["AUTHORIZED","ATTEMPTED","COMMITTED","FAILED","UNKNOWN","CANCELLED"]),response:z.unknown().optional(),metadata:z.record(z.unknown()).optional()},async a=>({content:[{type:"text",text:JSON.stringify(await effects.transition(a.effect_id,a.status,a.response,a.metadata),null,2)}]}));
+server.tool("run_manifest","Build RFC 8785/SHA-256 Merkle commitments for supplied run evidence",{run_id:z.string(),events:z.array(z.unknown()),effects:z.array(z.unknown()),metadata:z.record(z.unknown()).optional()},async a=>({content:[{type:"text",text:JSON.stringify(await buildRunManifest(a.run_id,a.events,a.effects,a.metadata??{}),null,2)}]}));
+server.tool("replay_compare","Compare recorded and replayed evidence without executing external effects",{expected:z.array(z.unknown()),actual:z.array(z.unknown())},async a=>({content:[{type:"text",text:JSON.stringify(await compareReplay(a.expected,a.actual),null,2)}]}));
 
 await server.connect(new StdioServerTransport());

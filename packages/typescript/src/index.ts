@@ -113,3 +113,32 @@ export class AuditClient {
   }
 
 }
+
+// --- Durable runtime, effect ledger, RFC 8785, manifests and replay ---
+export type RunStatus="PENDING"|"RUNNING"|"WAITING"|"SUCCEEDED"|"FAILED"|"CANCELLED";
+export interface RunState {run_id:string;status:RunStatus;step?:string;checkpoint?:unknown;lease_token?:string;lease_owner?:string;revision:number;updated_at:string}
+export class StaleLeaseError extends Error {}
+export class DurableRunStore {
+  private runs=new Map<string,RunState>();
+  create(runId=crypto.randomUUID()){if(this.runs.has(runId))throw new Error(`run already exists: ${runId}`);const s={run_id:runId,status:"PENDING" as RunStatus,revision:0,updated_at:new Date().toISOString()};this.runs.set(runId,s);return structuredClone(s)}
+  get(id:string){const s=this.runs.get(id);if(!s)throw new Error(`unknown run: ${id}`);return structuredClone(s)}
+  acquire(id:string,owner:string){const s=this.get(id);s.lease_owner=owner;s.lease_token=crypto.randomUUID();s.status="RUNNING";s.revision++;s.updated_at=new Date().toISOString();this.runs.set(id,s);return structuredClone(s)}
+  checkpoint(id:string,token:string,step:string,checkpoint:unknown,status:RunStatus="RUNNING"){const s=this.get(id);if(!s.lease_token||s.lease_token!==token)throw new StaleLeaseError("lease/fencing token is stale");Object.assign(s,{step,checkpoint,status,revision:s.revision+1,updated_at:new Date().toISOString()});this.runs.set(id,s);return structuredClone(s)}
+}
+export type EffectStatus="PROPOSED"|"AUTHORIZED"|"ATTEMPTED"|"COMMITTED"|"FAILED"|"UNKNOWN"|"CANCELLED";
+export interface EffectRecord {effect_id:string;run_id:string;tool_name:string;idempotency_key:string;request_hash:string;status:EffectStatus;response_hash?:string;metadata:Record<string,unknown>;updated_at:string}
+const transitions:Record<EffectStatus,EffectStatus[]>={PROPOSED:["AUTHORIZED","CANCELLED"],AUTHORIZED:["ATTEMPTED","CANCELLED"],ATTEMPTED:["COMMITTED","FAILED","UNKNOWN"],UNKNOWN:["COMMITTED","FAILED"],COMMITTED:[],FAILED:[],CANCELLED:[]};
+export class EffectLedger {
+ private rows:EffectRecord[]=[];
+ async propose(x:{run_id:string;tool_name:string;idempotency_key:string;request:unknown;metadata?:Record<string,unknown>}){const request_hash=await sha256Jcs(x.request);const prior=this.rows.find(r=>r.idempotency_key===x.idempotency_key);if(prior){if(prior.request_hash!==request_hash)throw new Error("idempotency key reused with different request");return structuredClone(prior)}const r:EffectRecord={effect_id:crypto.randomUUID(),run_id:x.run_id,tool_name:x.tool_name,idempotency_key:x.idempotency_key,request_hash,status:"PROPOSED",metadata:x.metadata??{},updated_at:new Date().toISOString()};this.rows.push(r);return structuredClone(r)}
+ async transition(id:string,status:EffectStatus,response?:unknown,metadata?:Record<string,unknown>){const r=this.rows.find(x=>x.effect_id===id);if(!r)throw new Error(`unknown effect: ${id}`);if(!transitions[r.status].includes(status))throw new Error(`invalid effect transition ${r.status} -> ${status}`);r.status=status;r.updated_at=new Date().toISOString();if(response!==undefined)r.response_hash=await sha256Jcs(response);if(metadata)r.metadata={...r.metadata,...metadata};return structuredClone(r)}
+ list(runId?:string){return structuredClone(runId?this.rows.filter(x=>x.run_id===runId):this.rows)}
+}
+function assertUnicode(s:string){for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);if(c>=0xd800&&c<=0xdbff){const n=s.charCodeAt(++i);if(!(n>=0xdc00&&n<=0xdfff))throw new Error("lone surrogate is not valid I-JSON")}else if(c>=0xdc00&&c<=0xdfff)throw new Error("lone surrogate is not valid I-JSON")}}
+export function canonicalizeJcs(v:unknown):string {if(v===null)return"null";if(typeof v==="string"){assertUnicode(v);return JSON.stringify(v)}if(typeof v==="number"){if(!Number.isFinite(v))throw new Error("NaN and Infinity are not valid I-JSON");return JSON.stringify(v)}if(typeof v==="boolean")return v?"true":"false";if(Array.isArray(v))return`[${v.map(canonicalizeJcs).join(",")}]`;if(typeof v==="object"){const o=v as Record<string,unknown>;const ks=Object.keys(o).sort();ks.forEach(assertUnicode);return`{${ks.map(k=>`${JSON.stringify(k)}:${canonicalizeJcs(o[k])}`).join(",")}}`}throw new Error(`unsupported JSON type: ${typeof v}`)}
+async function sha256Bytes(b:Uint8Array){return new Uint8Array(await crypto.subtle.digest("SHA-256",b))}function hex(b:Uint8Array){return [...b].map(x=>x.toString(16).padStart(2,"0")).join("")}function enc(s:string){return new TextEncoder().encode(s)}
+export async function sha256Jcs(v:unknown){return hex(await sha256Bytes(enc(canonicalizeJcs(v))))}
+async function tagged(tag:number,data:Uint8Array){const b=new Uint8Array(data.length+1);b[0]=tag;b.set(data,1);return sha256Bytes(b)}
+export async function merkleRoot(values:unknown[]){if(!values.length)return hex(await sha256Bytes(new Uint8Array()));let level=await Promise.all(values.map(v=>tagged(0,enc(canonicalizeJcs(v)))));while(level.length>1){if(level.length%2)level.push(level[level.length-1]);const next:Uint8Array[]=[];for(let i=0;i<level.length;i+=2){const b=new Uint8Array(1+level[i].length+level[i+1].length);b[0]=1;b.set(level[i],1);b.set(level[i+1],1+level[i].length);next.push(await sha256Bytes(b))}level=next}return hex(level[0])}
+export async function buildRunManifest(run_id:string,events:unknown[],effects:unknown[],metadata:Record<string,unknown>={}){return {manifest_version:"agent-ledger-run-manifest/1",canonicalization:"RFC8785",hash:"SHA-256",run_id,event_count:events.length,event_root:await merkleRoot(events),effect_count:effects.length,effect_root:await merkleRoot(effects),metadata}}
+export async function compareReplay(expected:unknown[],actual:unknown[]){const divergences:any[]=[];let matched=0;for(let i=0;i<Math.max(expected.length,actual.length);i++){if(i>=expected.length)divergences.push({index:i,kind:"unexpected",expected:null,actual:actual[i]});else if(i>=actual.length)divergences.push({index:i,kind:"missing",expected:expected[i],actual:null});else if(await sha256Jcs(expected[i])!==await sha256Jcs(actual[i]))divergences.push({index:i,kind:"content",expected:expected[i],actual:actual[i]});else matched++}return{matched,equivalent:divergences.length===0,effects_executed:false,divergences}}
