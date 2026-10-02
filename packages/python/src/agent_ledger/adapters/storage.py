@@ -55,7 +55,7 @@ class PostgresStateStore(DBAPIStateStore):
     dialect='postgres'
     @classmethod
     def from_dsn(cls,dsn):
-        import psycopg
+        import psycopg  # type: ignore[import-not-found]
         return cls(lambda: psycopg.connect(dsn))
 
 class MySQLStateStore(DBAPIStateStore):
@@ -63,6 +63,6 @@ class MySQLStateStore(DBAPIStateStore):
     @classmethod
     def from_url(cls,url):
         from urllib.parse import urlparse
-        import pymysql
+        import pymysql  # type: ignore[import-untyped]
         u=urlparse(url)
         return cls(lambda:pymysql.connect(host=u.hostname,port=u.port or 3306,user=u.username,password=u.password,database=u.path.lstrip('/'),autocommit=False))

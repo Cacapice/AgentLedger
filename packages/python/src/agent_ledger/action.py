@@ -81,7 +81,7 @@ class Ledger:
 
     def get_history(self):
         try:
-            import pandas as pd
+            import pandas as pd  # type: ignore[import-untyped]
             return pd.DataFrame(self._history)
         except ImportError: return list(self._history)
 

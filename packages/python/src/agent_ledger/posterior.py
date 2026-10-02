@@ -18,7 +18,7 @@ class PosteriorDataset:
 
     def to_pandas(self):
         try:
-            import pandas as pd
+            import pandas as pd  # type: ignore[import-untyped]
         except ImportError as exc:
             raise ImportError("Install agent-ledger[analytics] to use pandas export") from exc
         return pd.DataFrame(self.to_records())

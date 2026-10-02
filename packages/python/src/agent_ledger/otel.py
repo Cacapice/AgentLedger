@@ -5,7 +5,7 @@ from .causal import CausalContext
 
 def _otel():
     try:
-        from opentelemetry import trace, propagate
+        from opentelemetry import trace, propagate  # type: ignore[import-not-found]
         return trace, propagate
     except ImportError as e:
         raise RuntimeError("Install opentelemetry-api to use AgentLedger OTEL propagation") from e
