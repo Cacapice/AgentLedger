@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-ledger"
-version = "0.4.1"
+version = "0.9.2"
 description = "Tamper-evident audit SDK and verifier for autonomous agent actions"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -12,6 +12,8 @@ dependencies = ["pydantic>=2.7,<3"]
 
 [project.optional-dependencies]
 analytics = ["pandas>=2.0"]
+production = ["psycopg[binary]>=3.2", "PyMySQL>=1.1", "boto3>=1.35"]
+test = ["pytest>=8", "hypothesis>=6.112", "ruff>=0.6", "mypy>=1.11", "build>=1.2"]
 crypto = ["cryptography>=43"]
 license = {text = "Apache-2.0"}
 authors = [{name = "Agent Ledger contributors"}]
@@ -30,3 +32,14 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.mypy]
+python_version = "3.10"
+warn_unused_ignores = true
+warn_redundant_casts = true
+check_untyped_defs = true
+ignore_missing_imports = true

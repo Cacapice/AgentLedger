@@ -25,3 +25,21 @@ def verify_manifest(signed:dict[str,Any],public_key:bytes)->bool:
     if sig.get('key_fingerprint')!=key_fingerprint(public_key): return False
     try: Ed25519PublicKey.from_public_bytes(public_key).verify(base64.b64decode(sig['value']),canonicalize_bytes(body)); return True
     except Exception: return False
+
+def merkle_proof(values:list[Any], index:int)->dict[str,Any]:
+    """Return an inclusion proof compatible with this module's duplicate-last tree."""
+    if index < 0 or index >= len(values): raise IndexError(index)
+    level=[leaf_hash(v) for v in values]; pos=index; siblings=[]
+    while len(level)>1:
+        if len(level)%2: level.append(level[-1])
+        sib=pos-1 if pos%2 else pos+1
+        siblings.append({'side':'left' if sib<pos else 'right','hash':level[sib].hex()})
+        level=[_h(b'\x01',level[i]+level[i+1]) for i in range(0,len(level),2)]; pos//=2
+    return {'index':index,'leaf_hash':leaf_hash(values[index]).hex(),'siblings':siblings,'root':level[0].hex()}
+
+def verify_merkle_proof(value:Any, proof:dict[str,Any])->bool:
+    cur=leaf_hash(value)
+    if cur.hex()!=proof.get('leaf_hash'): return False
+    for s in proof.get('siblings',[]):
+        other=bytes.fromhex(s['hash']); cur=_h(b'\x01', other+cur if s['side']=='left' else cur+other)
+    return cur.hex()==proof.get('root')

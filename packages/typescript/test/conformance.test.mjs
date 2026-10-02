@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import {validEffectTransition} from '../dist/index.js';
+test('shared runtime semantic fixture',()=>{const f=JSON.parse(fs.readFileSync('../../contracts/conformance/runtime_semantics.v1.json','utf8'));for(const c of f.cases){let ok=true;for(let i=1;i<c.transitions.length;i++)if(!validEffectTransition(c.transitions[i-1],c.transitions[i]))ok=false;assert.equal(ok,c.valid,c.name)}})

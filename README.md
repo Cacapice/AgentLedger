@@ -192,3 +192,18 @@ Agent Ledger is evidence and validation infrastructure. It does **not** by itsel
 ### Cryptographic run evidence (v0.6)
 
 RFC 8785 canonical evidence, Ed25519-signed Merkle run manifests, durable run/effect primitives, MCP lifecycle tools, and safe replay/divergence reporting are documented in `docs/CRYPTOGRAPHIC_RUN_EVIDENCE.md`.
+
+## Runtime breadth and adapters
+
+AgentLedger is now contract-first across **Python, TypeScript, Go, and Rust**. Python remains the reference runtime; the other native baselines share language-neutral effect/fencing semantics under `contracts/`. Production integration is adapter-driven: SQLite WAL plus Postgres/MySQL DB-API state seams, local plus S3/MinIO-compatible evidence blobs, and framework facades for LangGraph, LangChain, CrewAI, AutoGen, OpenAI Agents SDK, LlamaIndex, and Semantic Kernel. See `docs/ADAPTERS_AND_LANGUAGES.md`.
+
+
+## Production certification (v0.8)
+
+Production adapters are now tested against real PostgreSQL, MySQL, and MinIO services in CI, with a shared certification harness and deterministic failure injection. Distributed workers can use TTL leases with heartbeats and monotonically increasing fencing tokens; stale workers cannot renew a superseded lease. See `docs/PRODUCTION_CERTIFICATION.md` and `docker-compose.integration.yml`.
+
+Framework-native examples for LangGraph, OpenAI Agents SDK, and CrewAI live under `examples/frameworks/`. The differentiating roadmap in `docs/VALUE_DIFFERENTIATORS.md` prioritizes portable signed evidence bundles, effect reconciliation, evidence-aware policy simulation, OTEL causal correlation, and reliability scorecards over integration-count feature chasing.
+
+## Verifiable Operations (v0.9 transition layer)
+
+The runtime now includes a forward-compatible evidence/control plane: portable offline-verifiable `.alb` run bundles, RFC 8785 + SHA-256 + Merkle + Ed25519 commitments, Merkle inclusion proofs for selective verification, explicit capability/version negotiation, provider-neutral UNKNOWN-effect reconciliation, causal OpenTelemetry correlation, side-effect-free policy simulation, evidence-derived SLOs, and runtime budgets/cancellation. See `docs/VERIFIABLE_OPERATIONS.md` and `docs/FUTURE_COMPATIBILITY.md`.

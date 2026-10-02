@@ -1,6 +1,6 @@
 {
   "name": "@agent-ledger/sdk",
-  "version": "0.6.0",
+  "version": "0.9.2",
   "description": "TypeScript SDK for tamper-evident agent audit events",
   "type": "module",
   "license": "Apache-2.0",
@@ -18,7 +18,8 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "test": "npm run build && node --test test/*.test.mjs"
+    "test": "npm run build && node --test test/*.test.mjs",
+    "check": "npm run build && npm test"
   },
   "devDependencies": {
     "typescript": "^5.6.3"

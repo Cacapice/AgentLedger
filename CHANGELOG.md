@@ -83,3 +83,17 @@ Commercial SaaS control-plane foundation: tenant billing and entitlement periods
 - Added optional Ed25519 evidence signing and key fingerprints via the `crypto` extra.
 - Fixed Python src-layout pytest discovery and public npm workspace references.
 - Added runtime/effect tests and documentation.
+
+## 0.7.0
+- Added language-neutral runtime contract and shared semantic conformance fixtures.
+- Added native Go and Rust runtime-core baselines alongside Python and TypeScript.
+- Added SQLite WAL, DB-API Postgres/MySQL, local blob, and S3/MinIO-compatible adapter seams.
+- Added framework runtime facades for LangGraph, LangChain, CrewAI, AutoGen, OpenAI Agents SDK, LlamaIndex, and Semantic Kernel.
+- Added four-language GitHub Actions conformance matrix.
+
+## 0.8.0
+- Real PostgreSQL, MySQL and MinIO CI integration certification.
+- Distributed TTL leases, heartbeats and monotonically increasing fencing tokens.
+- Adapter certification and deterministic failure-injection utilities.
+- Framework-native LangGraph, OpenAI Agents SDK and CrewAI examples.
+- Production differentiation roadmap centered on portable evidence, reconciliation and evidence-aware operations.

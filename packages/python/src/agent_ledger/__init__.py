@@ -22,3 +22,17 @@ __all__ += ["Ledger","ledger","IdempotencyConflictError","InsufficientFundsError
 from .jcs import canonicalize as canonicalize_jcs, canonicalize_bytes as canonicalize_jcs_bytes, JCSError
 from .manifest import build_run_manifest, sign_manifest, verify_manifest, merkle_root
 from .replay import compare as compare_replay, replay_effects, ReplayReport, Divergence
+from .bundle import export_bundle, verify_bundle
+from .manifest import merkle_proof, verify_merkle_proof
+from .compat import capabilities, require_supported
+from .reconcile import ReconcilerRegistry, ReconciliationResult
+from .controls import Budget, CancellationToken
+from .policy_sim import simulate as simulate_policy
+from .slo import evidence_slo
+from .causal import CausalContext
+__all__ += ["export_bundle","verify_bundle","merkle_proof","verify_merkle_proof","capabilities","require_supported","ReconcilerRegistry","ReconciliationResult","Budget","CancellationToken","simulate_policy","evidence_slo","CausalContext"]
+
+# Verifiable Operations release
+from .disclosure import disclose, verify_disclosure
+from .providers import StripeReconciler, GitHubReconciler, HTTPIdempotencyReconciler, register_builtin_reconcilers
+from .slo import scorecard, grouped_scorecards
