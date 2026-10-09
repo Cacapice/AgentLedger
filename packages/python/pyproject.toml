@@ -20,7 +20,7 @@ classifiers = [
 
 [project.optional-dependencies]
 analytics = ["pandas>=2.0"]
-production = ["psycopg[binary]>=3.2", "PyMySQL>=1.2.3", "boto3>=1.35"]
+production = ["psycopg[binary]>=3.3.6", "PyMySQL>=1.2.3", "boto3>=1.35"]
 test = ["pytest>=8", "hypothesis>=6.112", "ruff>=0.6", "mypy>=1.11", "build>=1.2"]
 crypto = ["cryptography>=43"]
 
