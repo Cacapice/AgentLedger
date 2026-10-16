@@ -22,7 +22,7 @@ def endpoint_for(signal: str, base: str | None = None) -> str:
     override = os.getenv(f"OTEL_EXPORTER_OTLP_{signal.upper()}_ENDPOINT")
     if override:
         return override
-    root = base or os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4318")
+    root = base or os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT") or "http://localhost:4318"
     return root.rstrip("/") + "/v1/" + signal
 
 

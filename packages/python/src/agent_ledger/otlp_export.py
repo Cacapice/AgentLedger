@@ -5,7 +5,7 @@ from typing import Any
 
 
 def _attribute(k: str, v: Any) -> dict[str, Any]:
-    if isinstance(v, bool): value = {"boolValue": v}
+    if isinstance(v, bool): value: dict[str, Any] = {"boolValue": v}
     elif isinstance(v, int): value = {"intValue": str(v)}
     elif isinstance(v, float): value = {"doubleValue": v}
     else: value = {"stringValue": str(v)}
