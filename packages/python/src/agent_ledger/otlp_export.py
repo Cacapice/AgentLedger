@@ -1,6 +1,6 @@
 """OTLP/HTTP JSON exporter for AgentLedger audit events (logs signal)."""
 from __future__ import annotations
-import json, os, time, urllib.request, urllib.error
+import time, urllib.request
 from typing import Any
 
 

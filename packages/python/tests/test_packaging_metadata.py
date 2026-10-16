@@ -7,7 +7,7 @@ def test_pyproject_metadata_sections_are_valid():
         data=tomllib.load(f)
     project=data["project"]
     optional=project["optional-dependencies"]
-    assert project["license"]["text"]=="Apache-2.0"
+    assert project["license"] == "Apache-2.0"
     assert isinstance(project["authors"],list)
     assert isinstance(project["keywords"],list)
     assert isinstance(project["classifiers"],list)

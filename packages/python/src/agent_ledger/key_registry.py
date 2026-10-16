@@ -4,7 +4,6 @@ Revocation is evaluated at verification time; archival verification requires
 separate trusted timestamp evidence and a documented historical trust policy.
 """
 from __future__ import annotations
-import base64
 from dataclasses import dataclass, field
 from typing import Any
 from .signed_envelope import verify_envelope

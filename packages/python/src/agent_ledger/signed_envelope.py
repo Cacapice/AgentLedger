@@ -1,7 +1,6 @@
 """Portable signed evidence envelope with external public-key verification."""
 from __future__ import annotations
-import base64, json
-from pathlib import Path
+import base64
 from typing import Any
 from .signing import sign_evidence, verify_evidence
 

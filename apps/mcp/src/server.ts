@@ -63,7 +63,7 @@ server.tool("audit_usage","Read current tenant usage from Agent Ledger",{},async
 server.tool("audit_verify_file","Verify a local Agent Ledger JSONL hash chain",{path:z.string()},async({path})=>({content:[{type:"text",text:JSON.stringify(await verifyFile(path),null,2)}]}));
 
 
-server.tool("run_create","Create an explicitly identified agent run",{run_id:z.string().optional()},async({run_id})=>({content:[{type:"text",text:JSON.stringify(runs.create(run_id),null,2)}]}));
+server.tool("run_create","Create an explicitly identified agent run",{run_id:z.string().uuid().optional()},async({run_id})=>({content:[{type:"text",text:JSON.stringify(runs.create(run_id as Parameters<typeof runs.create>[0]),null,2)}]}));
 server.tool("run_acquire","Acquire a run and receive a fencing token",{run_id:z.string(),owner:z.string()},async({run_id,owner})=>({content:[{type:"text",text:JSON.stringify(runs.acquire(run_id,owner),null,2)}]}));
 server.tool("run_checkpoint","Checkpoint a run; stale fencing tokens are rejected",{run_id:z.string(),lease_token:z.string(),step:z.string(),checkpoint:z.unknown(),status:z.enum(["RUNNING","WAITING"]).optional()},async a=>({content:[{type:"text",text:JSON.stringify(runs.checkpoint(a.run_id,a.lease_token,a.step,a.checkpoint,a.status??"RUNNING"),null,2)}]}));
 server.tool("effect_propose","Register an external effect without executing it",{run_id:z.string(),tool_name:z.string(),idempotency_key:z.string(),request:z.unknown(),metadata:z.record(z.unknown()).optional()},async a=>({content:[{type:"text",text:JSON.stringify(await effects.propose(a),null,2)}]}));
