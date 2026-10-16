@@ -1,5 +1,7 @@
 # Agent Ledger
 
+> **October 2026 engineering alignment:** See [industry alignment and outstanding production gates](docs/INDUSTRY_ALIGNMENT_2026.md). Alignment is not certification.
+
 **Evidence infrastructure for statistically validating autonomous AI systems.**
 
 Agent Ledger records consequential agent behavior as structured, tamper-evident evidence for **audit, statistical inference, and operational-boundary validation**. It is designed to answer not only *what did the agent do?*, but also *what evidence supports the behavior, did the observed trajectory remain inside its permitted operating set, and what can we responsibly infer from the observations?*
@@ -207,3 +209,6 @@ Framework-native examples for LangGraph, OpenAI Agents SDK, and CrewAI live unde
 ## Verifiable Operations (v0.9 transition layer)
 
 The runtime now includes a forward-compatible evidence/control plane: portable offline-verifiable `.alb` run bundles, RFC 8785 + SHA-256 + Merkle + Ed25519 commitments, Merkle inclusion proofs for selective verification, explicit capability/version negotiation, provider-neutral UNKNOWN-effect reconciliation, causal OpenTelemetry correlation, side-effect-free policy simulation, evidence-derived SLOs, and runtime budgets/cancellation. See `docs/VERIFIABLE_OPERATIONS.md` and `docs/FUTURE_COMPATIBILITY.md`.
+
+### External standards interoperability (October 2026)
+See [external standards and competitive readiness](docs/EXTERNAL_STANDARDS_AND_COMPETITIVENESS.md). APE is a vendor-defined schema, **not** an externally ratified standard. New W3C traceparent validation and privacy-preserving OpenTelemetry attribute mapping are available in `agent_ledger.standards_bridge`; certification and full interoperability are not claimed.

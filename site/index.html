@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<header><a class="brand" href="#">Agent Ledger</a><nav><a href="app.html">Console</a><a href="#quickstart">Quickstart</a><a href="#architecture">Architecture</a><a href="#pricing">Pricing</a><a href="#checkout">Venmo checkout</a><a href="../openapi.yaml">API</a></nav></header>
+<header><a class="brand" href="#">Agent Ledger</a><nav><a href="app.html">Console</a><a href="#quickstart">Quickstart</a><a href="#architecture">Architecture</a><a href="#standards">Standards</a><a href="#pricing">Pricing</a><a href="#checkout">Venmo checkout</a><a href="../openapi.yaml">API</a></nav></header>
 <main>
 <section class="hero"><p class="eyebrow">SYSTEM OF RECORD FOR AUTONOMOUS ACTIONS</p><h1>Every consequential agent action.<br>Attributable. Verifiable.</h1><p class="lede">Open SDKs instrument agent tools. A tenant-scoped ledger creates independent, tamper-evident receipts. MCP makes accountability callable by agents themselves.</p><div class="actions"><a class="primary" href="#quickstart">Start with the SDK</a><a href="#architecture">See how it works</a></div></section>
 <section class="grid"><article><span>01</span><h2>Instrument</h2><p>Python and TypeScript SDKs capture tool, actor, model, policy and execution context with default redaction.</p></article><article><span>02</span><h2>Record</h2><p>The hosted API authenticates each tenant, assigns server receipts, extends the tenant chain and meters usage.</p></article><article><span>03</span><h2>Verify</h2><p>CLI and MCP verification expose broken sequences, altered events and chain-head integrity without a dashboard dependency.</p></article></section>
@@ -19,6 +19,15 @@ def execute_transfer(...):
 
 $ agent-ledger verify audit_events.jsonl
 ✓ Hash chain intact</code></pre></section>
+<section id="standards" class="panel">
+<div><p class="eyebrow">OPEN STANDARDS &amp; VERIFIABLE OPERATIONS</p>
+<h2>Evidence designed for independent verification.</h2>
+<p>AgentLedger connects agent audit evidence with established interoperability and software supply-chain practices. These are implementation capabilities and validation targets, not claims of external certification.</p></div>
+<div><h3>Interoperability</h3><p>OTLP/HTTP JSON exporters for logs, traces, and metrics; transient-error retry handling. Live collector integration is configured for CI and remains subject to successful execution.</p>
+<h3>Cryptographic evidence</h3><p>Ed25519 signed evidence envelopes, trusted public-key registries, and rotation/revocation checks. Verification requires independently managed trust anchors.</p>
+<h3>Canonicalization</h3><p>Shared Python and TypeScript RFC 8785 fixtures; complete edge-case conformance remains a release gate.</p>
+<h3>Build provenance</h3><p>GitHub Actions attestation workflow prepared. A signed attestation exists only after the workflow successfully runs on a published build.</p>
+<p><strong>Verify a published wheel:</strong></p><pre><code>gh attestation verify ./agent_ledger-*.whl --repo Cacapice/AgentLedger</code></pre></div></section>
 <section id="architecture" class="panel reverse"><pre><code>Agent / App
      │
  SDK │ MCP

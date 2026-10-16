@@ -12,7 +12,7 @@ jobs:
       - uses: actions/setup-python@v7
         with: {python-version: '3.12', cache: pip}
       - run: python -m pip install --upgrade pip
-      - run: pip install -e 'packages/python[crypto,test]'
+      - run: pip install -e 'packages/python[crypto,test,production]'
       - run: ruff check --select F packages/python/src packages/python/tests
       - run: mypy packages/python/src/agent_ledger
       - run: pytest packages/python/tests -q
@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
-        with: {node-version: '22', }
+        with: {node-version: '22'}
       - run: npm install
         working-directory: packages/typescript
       - run: npm run check
@@ -51,3 +51,18 @@ jobs:
         working-directory: rust
       - run: cargo test
         working-directory: rust
+  mcp-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: npm install
+        working-directory: packages/typescript
+      - run: npm run build
+        working-directory: packages/typescript
+      - run: npm install
+        working-directory: apps/mcp
+      - run: npm run build
+        working-directory: apps/mcp

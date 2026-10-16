@@ -9,19 +9,18 @@ description = "Tamper-evident audit SDK and verifier for autonomous agent action
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = ["pydantic>=2.14.1,<3"]
-license = {text = "Apache-2.0"}
+license = "Apache-2.0"
 authors = [{name = "Agent Ledger contributors"}]
 keywords = ["ai", "agents", "audit", "governance", "provenance", "mcp"]
 classifiers = [
   "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: Apache Software License",
   "Operating System :: OS Independent"
 ]
 
 [project.optional-dependencies]
 analytics = ["pandas>=2.0"]
 production = ["psycopg[binary]>=3.3.6", "PyMySQL>=1.2.3", "boto3>=1.43.112"]
-test = ["pytest>=8", "hypothesis>=6.112", "ruff>=0.6", "mypy>=1.11", "build>=1.6.1"]
+test = ["pytest>=8", "hypothesis>=6.112", "ruff>=0.6", "mypy>=1.11", "build>=1.6.1", "types-PyMySQL>=1.1", "opentelemetry-api>=1.25"]
 crypto = ["cryptography>=43"]
 
 [project.scripts]

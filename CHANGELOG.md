@@ -1,3 +1,9 @@
+## Unreleased — October 2026 engineering alignment
+
+- Modernize Python packaging license metadata and CI optional-dependency coverage.
+- Align SDK and MCP TypeScript compiler ranges; add MCP build verification.
+- Document interoperability, supply-chain, privacy, and production-validation gaps without claiming certification.
+
 ## 0.6.0
 
 - RFC 8785 JCS canonicalization for signed evidence.

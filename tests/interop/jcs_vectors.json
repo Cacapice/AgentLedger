@@ -1,0 +1,33 @@
+[
+  {
+    "input": {
+      "z": 1,
+      "a": "hello",
+      "arr": [
+        true,
+        null,
+        3
+      ]
+    },
+    "canonical": "{\"a\":\"hello\",\"arr\":[true,null,3],\"z\":1}"
+  },
+  {
+    "input": {
+      "é": "café",
+      "𝄞": "music",
+      "a": -0.0
+    },
+    "canonical": "{\"a\":0,\"é\":\"café\",\"𝄞\":\"music\"}"
+  },
+  {
+    "input": {
+      "nested": {
+        "b": 2,
+        "a": 1
+      },
+      "small": 1e-06,
+      "big": 1e+21
+    },
+    "canonical": "{\"big\":1e+21,\"nested\":{\"a\":1,\"b\":2},\"small\":0.000001}"
+  }
+]

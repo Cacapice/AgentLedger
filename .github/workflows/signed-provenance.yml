@@ -1,0 +1,36 @@
+name: signed-provenance
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+jobs:
+  attest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install build
+      - run: python -m build packages/python
+      - uses: actions/attest@v4
+        with:
+          subject-path: packages/python/dist/*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: signed-provenance-python-dist
+          path: packages/python/dist/*
+      - name: Verify attestation against repository identity
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for file in packages/python/dist/*; do
+            gh attestation verify "$file" --repo "$GITHUB_REPOSITORY"
+          done
