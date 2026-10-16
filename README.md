@@ -8,6 +8,10 @@ Agent Ledger records consequential agent behavior as structured, tamper-evident 
 
 Agent Ledger complements existing agent frameworks and observability stacks rather than replacing them.
 
+## Reliability and integration qualification
+
+See [reliability and integration qualification](docs/RELIABILITY_AND_INTEGRATION.md) and the [release checklist](docs/RELEASE_CHECKLIST.md). CI, independently verifiable releases, live collector tests, and third-party review are required evidence of readiness; no external certification is implied.
+
 ## What distinguishes Agent Ledger
 
 Most audit systems stop at reconstructing actions. Agent Ledger treats recorded transitions as a **measurement substrate** that can be analyzed after execution.
