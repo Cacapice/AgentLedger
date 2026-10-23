@@ -23,7 +23,7 @@ jobs:
       - uses: actions/attest@v4
         with:
           subject-path: packages/python/dist/*
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: signed-provenance-python-dist
           path: packages/python/dist/*
